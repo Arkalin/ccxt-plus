@@ -29,7 +29,7 @@ class BaseMapper:
 
     @classmethod
     def map_with_validation(cls, data):
-        if not isinstance(data, list[list]):
+        if not isinstance(data, list):
             raise ValueError(f"Data has a bad type:{type(data)}")
         data = cls.map(data)
         cls.validate(data)

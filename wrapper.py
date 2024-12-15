@@ -48,7 +48,7 @@ class CCXTExchangeWrapper:
         """
         self.exchange_obj = exchange_obj
 
-    def fetch_all_ohlcv(self, symbol: str, timeframe, kwargs):
+    def fetch_all_ohlcv(self, symbol: str, timeframe, **kwargs):
         """
         Wrapper for the fetch_ohlcv method.
 
@@ -95,7 +95,7 @@ class CCXTExchangeWrapper:
         factory = Factory(fetch_func)
         self._execute(labels, task, saver, factory, mapper.map_with_validation)
 
-    def fetch_all_funding_rate_history(self, symbol: str, kwargs):
+    def fetch_all_funding_rate_history(self, symbol: str, **kwargs):
         """
         Wrapper for the fetch_funding_rate_history method.
 
@@ -145,10 +145,10 @@ class CCXTExchangeWrapper:
             callable: A wrapped function that uses a random proxy and handles exceptions.
         """
 
-        def wrapped(*args, kwargs):
+        def wrapped(*args, **kwargs):
             try:
                 self.exchange_obj.proxies = ProxyManager.get_random_proxy()
-                return ccxt_fetch_func(*args, kwargs), DataFlag.NORMAL
+                return ccxt_fetch_func(*args, **kwargs), DataFlag.NORMAL
             except Exception:
                 return None, DataFlag.ERROR
 
