@@ -1,0 +1,5 @@
+__pycache__
+app.log
+proxies.yml
+*test*.py
+data/
