@@ -60,6 +60,8 @@ class Factory:
         self._online_queue.join()
         self._local_queue.join()
         self._stop_workers()
+        self._progress_bar.n = self._progress_bar.total
+        self._progress_bar.refresh()
         self._progress_bar.disable = True
         if self._abnormal_termination_info:
             raise RuntimeError(self._abnormal_termination_info)
