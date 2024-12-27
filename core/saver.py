@@ -220,6 +220,7 @@ class CSVSaver:
             for missing_timestamp in self._missing_times:
                 missing_time = timestamp_to_datetime(missing_timestamp)
                 f.write(f"{missing_time} ({missing_timestamp})\n")
+        Logger.info(f"Missing times saved in {file_name}")
 
     def save(self, processed_data):
         """
@@ -247,10 +248,8 @@ class CSVSaver:
         for i in range(0, len(df), chunk_size):
             chunk = df.iloc[i : i + chunk_size]
             output_file = os.path.join(self._work_folder, f"{file_count}.csv")
-            try:
-                chunk.to_csv(output_file, index=False, header=self.columns)
-                Logger.info(f"Created File: {output_file}")
-                file_count += 1
-            except Exception as e:
-                Logger.error(f"An error occurs when creating {output_file}: {e}")
-                continue
+            chunk.to_csv(output_file, index=False, header=self.columns)
+            file_count += 1
+        Logger.info(
+            f"Created {file_count} file{'s' if file_count > 1 else ''} in {self._work_folder}"
+        )
