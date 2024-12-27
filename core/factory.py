@@ -1,9 +1,12 @@
 import queue
 import threading
 
+from tqdm import tqdm
+
 from core.task import Task
 from helpers.config import Config
 from helpers.utils import DataFlag
+
 
 class Factory:
     """
@@ -21,9 +24,7 @@ class Factory:
         _abnormal_termination_info (str): Info about abnormal termination.
     """
 
-    def __init__(
-        self, fetch_data_callback, max_attempts=Config("MAX_ATTEMPT_TIMES")
-    ):
+    def __init__(self, fetch_data_callback, max_attempts=Config("MAX_ATTEMPT_TIMES")):
         """
         Initialize the Factory instance.
 
@@ -39,6 +40,7 @@ class Factory:
         self._lock = threading.Lock()
         self._cached_raw_data = []
         self._abnormal_termination_info = None
+        self._progress_bar = None
 
     def complete(self, task: Task):
         """
@@ -58,6 +60,7 @@ class Factory:
         self._online_queue.join()
         self._local_queue.join()
         self._stop_workers()
+        self._progress_bar.disable = True
         if self._abnormal_termination_info:
             raise RuntimeError(self._abnormal_termination_info)
         return self._cached_raw_data
@@ -69,6 +72,13 @@ class Factory:
         Args:
             task_list (list): List of timestamps to process.
         """
+        self._progress_bar = tqdm(
+            total=len(task_list),
+            desc="Requesting: ",
+            position=0,
+            leave=True,
+            disable=not Config("ENABLE_PROGRESS_BAR"),
+        )
         for ts in task_list:
             self._online_queue.put((ts, 0))  # Timestamp, retry count
 
@@ -140,9 +150,7 @@ class Factory:
                 with self._lock:
                     self._stop_event.set()
                     if self._abnormal_termination_info is None:
-                        self._abnormal_termination_info = (
-                            f"Exceeded max attempts ({attempt_times - 1}) for timestamp ({ts})."
-                        )
+                        self._abnormal_termination_info = f"Exceeded max attempts ({attempt_times - 1}) for timestamp ({ts})."
             # TODO: Modify fetch logic with since=ts
             data, flag = self.fetch_data_callback(since=ts)
             self._local_queue.put((ts, data, flag, attempt_times + 1))
@@ -164,6 +172,7 @@ class Factory:
             if flag == DataFlag.NORMAL:
                 if data:
                     self._cached_raw_data.extend(data)
+                    self._progress_bar.update(1)
             else:
                 self._online_queue.put((ts, attempt_times))
             self._local_queue.task_done()
