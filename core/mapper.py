@@ -1,3 +1,6 @@
+from errors import DataFormatValidationError
+
+
 class BaseMapper:
     """
     Base class for data mapper. Only classes inheriting this can be used as mapper in CCXTExchangeWrapper.
@@ -21,7 +24,7 @@ class BaseMapper:
                 )
             for row in data:
                 if len(row) != len(cls.columns):
-                    raise ValueError(
+                    raise DataFormatValidationError(
                         f"Row length {len(row)} does not match expected columns {len(cls.columns)}"
                     )
             cls._validated = True

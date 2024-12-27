@@ -6,14 +6,18 @@ import pandas as pd
 from helpers.config import Config
 from helpers.logger import Logger
 from helpers.utils import Labels, timeframe_to_timestamp, timestamp_to_datetime
+from helpers.errors import ExceedMaxMissingPointsError
+
 
 def _id(func_id):
     """Decorator to assign an ID to a method for mapping purposes."""
+
     def decorator(func):
         func.id = func_id
         return func
 
     return decorator
+
 
 class CSVSaver:
     """
@@ -145,7 +149,9 @@ class CSVSaver:
             self._missing_times = set()
             return True
         if len(missing_timestamps) > Config("ALLOW_MAX_MISSING_TIMESTAMPS"):
-            raise RuntimeError(f"Too many missing time points: {len(missing_timestamps)}")
+            raise ExceedMaxMissingPointsError(
+                f"Too many missing time points: {len(missing_timestamps)}"
+            )
         Logger.info(f"Total {len(missing_timestamps)} missing data points")
         self._missing_times = sorted(missing_timestamps)
         return True

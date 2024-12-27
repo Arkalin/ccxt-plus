@@ -172,10 +172,14 @@ class CCXTExchangeWrapper:
         Raises:
             Exception: If any error occurs during execution.
         """
-        Logger.info("Task started", prefix=labels)
-        task.initialize()
-        raw_data = factory.complete(task)
-        data = map_func(raw_data) if callable(map_func) else raw_data
-        saver.save(data)
-        Logger.critical("Task completed", prefix=labels)
+        try:
+            Logger.info("Task started", prefix=labels)
+            task.initialize()
+            raw_data = factory.complete(task)
+            data = map_func(raw_data) if callable(map_func) else raw_data
+            saver.save(data)
+            Logger.critical("Task completed", prefix=labels)
+        except Exception as e:
+            Logger.error(f"Task failed, Error occurrs: {e}", prefix=labels)
+            return False
         return True

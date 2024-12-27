@@ -1,4 +1,5 @@
 from time import sleep
+from errors import TaskInitializationError
 from helpers.config import Config
 from helpers.utils import DataFlag
 
@@ -87,4 +88,6 @@ class Task:
         """
         if callable(self._initialize_func):
             return self._initialize_func()
-        raise RuntimeError("Task initialzing failed, _initialize_func is not callable")
+        raise TaskInitializationError(
+            "Task initialzing failed, _initialize_func is not callable"
+        )
