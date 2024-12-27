@@ -1,5 +1,5 @@
 from time import sleep
-from errors import TaskInitializationError
+from helpers.errors import TaskInitializationError
 from helpers.config import Config
 from helpers.utils import DataFlag
 

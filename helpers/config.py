@@ -2,7 +2,7 @@ import os
 
 import yaml
 
-from errors import ConfigurationError
+from helpers.errors import ConfigurationError
 
 _config_path = os.path.join("config", "config.yml")
 
