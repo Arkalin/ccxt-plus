@@ -15,6 +15,10 @@ _TIMEFRAME_MAPPING = {
     "M": 2628000,
 }
 
+_UNITS_MAPPING = {
+    "s": 1,
+    "ms": 1000,
+}
 
 class DataFlag(Enum):
     """
@@ -66,31 +70,33 @@ class Labels:
             yield label
 
 
-def timeframe_to_timestamp(timeframe, rate=1000):
+def timeframe_to_timestamp(timeframe, unit="ms"):
     """
     Convert a timeframe string to a timestamp value in milliseconds.
 
     Args:
-        timeframe (str): Timeframe string, e.g., '1h' for one hour.
-        rate (int, optional): Conversion rate, default is 1000 for milliseconds.
+        timestamp (int): Timestamp in milliseconds.
+        unit (int, optional): Conversion unit, default is 'ms' for milliseconds.
 
     Returns:
         int: Timestamp value in milliseconds.
     """
+    rate = _UNITS_MAPPING[unit]
     return _TIMEFRAME_MAPPING[timeframe[-1]] * int(timeframe[:-1]) * rate
 
 
-def timestamp_to_datetime(timestamp, rate=1000):
+def timestamp_to_datetime(timestamp, unit="ms"):
     """
     Convert a timestamp (in milliseconds) to a formatted datetime string.
 
     Args:
         timestamp (int): Timestamp in milliseconds.
-        rate (int, optional): Conversion rate, default is 1000 for milliseconds.
+        unit (int, optional): Conversion unit, default is 'ms' for milliseconds.
 
     Returns:
         str: Formatted datetime string in the format 'YYYY-MM-DD HH:MM:SS'.
     """
+    rate = _UNITS_MAPPING[unit]
     timestamp = int(int(timestamp) / rate)
     dt_object = datetime.datetime.fromtimestamp(timestamp, tz=datetime.timezone.utc)
     return dt_object.strftime("%Y-%m-%d %H:%M:%S")
