@@ -15,7 +15,7 @@ class Task:
         _initialize_func (callable): A function to initialize the task.
     """
 
-    def __init__(self, since, until, thread_count, fetch_func, map_func=None):
+    def __init__(self, since, until, thread_count, fetch_func=None, map_func=None, delta=None):
         """
         Initialize the Task object.
 
@@ -23,26 +23,17 @@ class Task:
             since (int): Start timestamp for the task.
             until (int): End timestamp for the task.
             thread_count (int): Total number of threads to use.
-            fetch_func (callable): Function to fetch raw data.
+            fetch_func (callable): Function to fetch online raw data.
             map_func (callable, optional): Function to map raw data. Defaults to None.
+            delta (int, optional): Enter time interval if you want to generate task locally. Defaults to None.
         """
         self.timestamp_list = None
         self.online_worker_count = None
         self.local_worker_count = None
         self._initialize_func = None
-        self._build_initialize_func(since, until, thread_count, fetch_func, map_func)
+        self._build_initialize_func(since, until, thread_count, fetch_func, map_func, delta)
 
-    def _build_initialize_func(self, since, until, thread_count, fetch_func, map_func):
-        """
-        Build the initialization function for the task.
-
-        Args:
-            since (int): Start timestamp for the task.
-            until (int): End timestamp for the task.
-            thread_count (int): Total number of threads to use.
-            fetch_func (callable): Function to fetch raw data.
-            map_func (callable, optional): Function to map raw data. Defaults to None.
-        """
+    def _build_initialize_func(self, since, until, thread_count, fetch_func, map_func, delta):
 
         def initialize_func():
             """
@@ -51,9 +42,16 @@ class Task:
             Raises:
                 RuntimeError: If the task cannot be initialized after maximum attempts.
             """
-            nonlocal since
+            nonlocal since, delta
             online_worker_count = thread_count
             local_worker_count = max(1, thread_count // Config("LOCAL_THREADS_RATIO"))
+            # If delta is provided, generate timestamps locally
+            if delta:
+                self.timestamp_list = list(range(since, until, delta))
+                self.online_worker_count = online_worker_count
+                self.local_worker_count = local_worker_count
+                return self
+            # generate timestamps online
             test_since = since
             attempt_times = Config("MAX_ATTEMPT_TIMES")
             while attempt_times:

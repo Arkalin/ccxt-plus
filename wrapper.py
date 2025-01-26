@@ -80,7 +80,7 @@ class CCXTExchangeWrapper:
             kwargs.get("since", Config("DEFAULT_SINCE_TIME")),
             kwargs.get("until", int(time() * 1000)),
             kwargs.get("threads", Config("GLOBAL_THREADS")),
-            fetch_func,
+            fetch_func=fetch_func,
         )
         saver = CSVSaver(
             labels,
@@ -126,7 +126,7 @@ class CCXTExchangeWrapper:
             kwargs.get("since", Config("DEFAULT_SINCE_TIME")),
             kwargs.get("until", int(time() * 1000)),
             kwargs.get("threads", Config("GLOBAL_THREADS")),
-            fetch_func,
+            fetch_func=fetch_func,
             map_func=mapper.map_with_validation,
         )
         actions = kwargs.get("actions", _ACTIONS_MAPPING["MODE_1"])
