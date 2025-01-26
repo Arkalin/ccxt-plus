@@ -108,9 +108,10 @@ class CSVSaver:
         """
         Convert the time column from milliseconds to a pandas datetime format.
         """
-        self._df[self._time_column_name] = pd.to_datetime(
-            self._df[self._time_column_name], unit="ms"
-        )
+        # self._df[self._time_column_name] = pd.to_datetime(
+        #     self._df[self._time_column_name], unit="ms"
+        # )
+        self._df[self._time_column_name] = self._df[self._time_column_name].apply(timestamp_to_datetime)
 
     def _initialize_missing_times(self):
         """
