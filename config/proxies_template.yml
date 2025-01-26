@@ -1,0 +1,28 @@
+comment: |
+  This is a template file for proxies.yml. You can copy this file to proxies.yml and modify it to add your own proxies.
+  The `proxies` field is a list of proxy configurations. Each proxy configuration is a dictionary with the following fields:
+  - name: The name of the proxy. This is used to identify the proxy in the UI.
+  - type: The type of the proxy. Currently, only `ss` (Shadowsocks) is supported.
+  - server: The address of the Shadowsocks server.
+  - port: The port of the Shadowsocks server.
+  - cipher: The encryption cipher used by the Shadowsocks server.
+  - password: The password used to connect to the Shadowsocks server.
+  - udp: Whether to enable UDP relay. Set this to `true` if the Shadowsocks server supports UDP relay.
+  You can add multiple proxy configurations to the `proxies` list to connect to multiple Shadowsocks servers.
+bin_path: "D:/path/to/your/shadowsocks-libev/64/ss-local.exe"
+base_port: 1080
+proxies:
+  - name: Example Proxy 1
+    type: ss
+    server: foo.example.com
+    port: 12345
+    cipher: rc4-md5
+    password: YOUR_PASSWORD
+    udp: true
+  - name: Example Proxy 2
+    type: ss
+    server: foo.example.com
+    port: 12345
+    cipher: rc4-md5
+    password: YOUR_PASSWORD
+    udp: true
