@@ -4,3 +4,4 @@ proxies.yml
 *test*.py
 data/
 .vscode
+/test
