@@ -59,3 +59,47 @@ class FundingRateHistoryMapper(BaseMapper):
             ]
             for item in data
         ]
+
+
+class BinanceMarginInterestMapper(BaseMapper):
+    columns = ["time", "rate"]
+
+    @staticmethod
+    def map(data):
+        return [
+            [
+                item["timestamp"],
+                item["dailyInterestRate"],
+            ]
+            for item in data
+        ]
+
+class VolumeMapper(BaseMapper):
+    columns = ["time", "open", "high", "low", "close", "volume"]
+
+    @staticmethod
+    def map(data):
+        return data
+    
+class VolumeMapper(BaseMapper):
+    columns = ["time", "open", "high", "low", "close", "volume"]
+
+    @staticmethod
+    def map(data):
+        return [entry[:6] for entry in data]
+    
+class BinanceFundingInterestMapper(BaseMapper):
+    columns = ["time", "symbol", "funding_interval_hours","last_funding_rate","mark_price"]
+
+    @staticmethod
+    def map(data):
+        return [
+            [
+                item["calcTime"],
+                item["symbol"],
+                item["fundingIntervalHours"],
+                item["lastFundingRate"],
+                item["markPrice"],
+            ]
+            for item in data
+        ]
