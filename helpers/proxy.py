@@ -121,6 +121,13 @@ class ProxyManager:
         ProxyManager._processes.clear()
         ProxyManager._proxies.clear()
         ProxyManager._is_running = False
+    
+    def __enter__(self):
+        self.start_proxies()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.stop_proxies()
 
     @staticmethod
     def get_random_proxy():
